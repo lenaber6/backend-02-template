@@ -10,3 +10,7 @@ const server = http.createServer((request, response) => {
     // - Если переданы какие-либо другие параметры, то пустой ответ, код ответа 500
 
 });
+
+const hello = require('./modules/hello-module')
+
+hello();
