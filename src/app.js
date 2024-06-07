@@ -4,6 +4,11 @@ const { URL } = require("url"); // Импортируем класс URL из в
 
 // Пример request.url: '/?hello=world'
 
+// const dotenv = require("dotenv");
+// dotenv.config();
+// const {PORT} = process.env;
+// console.log(PORT);
+
 const server = http.createServer((request, response) => {
   const ipAddress = "http://127.0.0.1:3003";
   const url = new URL(request.url, ipAddress); // Создаем объект URL
@@ -22,17 +27,16 @@ if (userName) {
     return;
   }
 
-  if (request.url === "/users") {
+  if (request.url === "/?users") {
     response.status = 200;
     response.statusMessage = "OK";
     response.header = "Content-Type: application/json";
     response.write(getUsers());
     response.end();
-
     return;
   }
   
-  if (request.url === "/hello") {
+  if (request.url === "/?hello") {
     response.status = 400;
     response.statusMessage = "Bad Request";
     response.header = "Content-Type: text/plain";
@@ -47,13 +51,14 @@ if (userName) {
     response.write("Hello, World!!!");
     response.end();
     return;
-  } else {
+  } 
     response.status = 500;
-    response.statusMessage = "OK";
+    response.statusMessage = "Bad Request";
     response.header = "Content-Type: text/plain";
     response.write("No hellos!!!");
     response.end();
-  }
+    return;
+  
 
   // Написать обработчик запроса:
   // - Ответом на запрос `?hello=<name>` должна быть **строка** "Hello, <name>.", код ответа 200
