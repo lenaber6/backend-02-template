@@ -4,13 +4,14 @@ const { URL } = require("url"); // Импортируем класс URL из в
 
 // Пример request.url: '/?hello=world'
 
-// const dotenv = require("dotenv");
-// dotenv.config();
-// const {PORT} = process.env;
-// console.log(PORT);
+const dotenv = require("dotenv");
+dotenv.config();
+const {PORT} = process.env;
+console.log(PORT);
 
 const server = http.createServer((request, response) => {
-  const ipAddress = "http://127.0.0.1:3003";
+  // const ipAddress = "http://127.0.0.1:3003";
+  const ipAddress = `http://127.0.0.1:${PORT}`;
   const url = new URL(request.url, ipAddress); // Создаем объект URL
   // Получаем параметры
   const userName = url.searchParams.get("hello");// Здесь будет 'world', если параметр присутствует
@@ -19,42 +20,42 @@ console.log(`Hello name is: ${userName}`);
 // Этот код предполагает, что request — это объект входящего
 //  HTTP-запроса, который вы получаете в обработчике запросов.
 if (userName) {
-    response.status = 200;
+    response.statusCode = 200;
     response.statusMessage = "OK";
-    response.header = "Content-Type: text/plain";
+    response.setHeader("Content-Type", "text/plain");
     response.write(`Hello, ${userName}!!!`);
     response.end();
     return;
   }
-
+  if (request.url === "/?hello") {
+    response.statusCode = 400;
+    response.statusMessage = "Bad Request";
+    response.setHeader("Content-Type", "text/plain");
+    response.write("Enter a name, pls");
+    response.end();
+    return;
+  }
   if (request.url === "/?users") {
-    response.status = 200;
+    response.statusCode = 200;
     response.statusMessage = "OK";
-    response.header = "Content-Type: application/json";
+    response.setHeader("Content-Type", "application/json");
     response.write(getUsers());
     response.end();
     return;
   }
   
-  if (request.url === "/?hello") {
-    response.status = 400;
-    response.statusMessage = "Bad Request";
-    response.header = "Content-Type: text/plain";
-    response.write("Enter a name");
-    response.end();
-    return;
-  }
+ 
   if (request.url === "/") {
-    response.status = 200;
+    response.statusCode = 200;
     response.statusMessage = "OK";
-    response.header = "Content-Type: text/plain";
+    response.setHeader("Content-Type", "text/plain");
     response.write("Hello, World!!!");
     response.end();
     return;
   } 
-    response.status = 500;
+    response.statusCode = 500;
     response.statusMessage = "Bad Request";
-    response.header = "Content-Type: text/plain";
+    response.setHeader("Content-Type", "text/plain");
     response.write("No hellos!!!");
     response.end();
     return;
@@ -68,5 +69,5 @@ if (userName) {
   // - Если переданы какие-либо другие параметры, то пустой ответ, код ответа 500
 });
 server.listen(3003, () => {
-  console.log("Сервер запущен по адресу http://127.0.0.1:3003");
+  console.log(`Сервер запущен по адресу http://127.0.0.1:${PORT}`);
 });
